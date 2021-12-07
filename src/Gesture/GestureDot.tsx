@@ -18,6 +18,14 @@ const GestureDot = () => {
     const translateX = useSharedValue(0);
     const translateY = useSharedValue(0);
     const backgroundValue = useSharedValue("white");
+    const topLeftX = useSharedValue(0)
+    const topLeftY = useSharedValue(0)
+    const topRightX = useSharedValue(0)
+    const topRightY = useSharedValue(0)
+    const botLeftX = useSharedValue(0)
+    const botLeftY = useSharedValue(0)
+    const botRightX = useSharedValue(0)
+    const botRightY = useSharedValue(0)
 
     const vStyle = useAnimatedStyle(() => {
         return {
@@ -28,11 +36,34 @@ const GestureDot = () => {
         }
     })
 
-    const bStyle = useAnimatedStyle(() => {
+    const tlStyle = useAnimatedStyle(() => {
         return {
-            backgroundColor: backgroundValue.value
+            width: withTiming(topLeftX.value),
+            height: withTiming(topLeftY.value)
         }
     })
+
+    const trStyle = useAnimatedStyle(() => {
+        return {
+            width: withTiming(topRightX.value),
+            height: withTiming(topRightY.value),
+        }
+    })
+
+    const blStyle = useAnimatedStyle(() => {
+        return {
+            width: withTiming(botLeftX.value),
+            height: withTiming(botLeftY.value),
+        }
+    })
+
+    const brStyle = useAnimatedStyle(() => {
+        return {
+            width: withTiming(botRightX.value),
+            height: withTiming(botRightY.value),
+        }
+    })
+
 
 
     const panGesture = useAnimatedGestureHandler<PanGestureHandlerGestureEvent, ContextInterface>({
@@ -53,18 +84,38 @@ const GestureDot = () => {
             else if (x > windowWidth - 100) translateX.value = windowWidth - 100;
             else translateX.value = x;
 
-            console.log("x : " + x)
-            console.log("y : " + y)
-            console.log(windowWidth - 100)
+
             //top left
-            if (x < 100 && y < 100) backgroundValue.value = "red";
+            if (x < 100 && y < 100) {
+                topLeftX.value = windowWidth
+                topLeftY.value = windowHeight + 500
+
+            }
             //top right
-            else if (x > windowWidth - 200 && y < 100) backgroundValue.value = "orange";
+            else if (x > windowWidth - 200 && y < 100) {
+                topRightX.value = windowWidth
+                topRightY.value = windowHeight + 500
+            }
             //bottom left
-            else if (x < 100 && y > windowHeight - 200) backgroundValue.value = "green";
+            else if (x < 100 && y > windowHeight - 200) {
+                botLeftX.value = windowWidth
+                botLeftY.value = windowHeight + 500
+            }
             //bottom right
-            else if (x > windowWidth - 200 && y > windowHeight - 200) backgroundValue.value = "aquamarine";
-            else backgroundValue.value = "white"
+            else if (x > windowWidth - 200 && y > windowHeight - 200) {
+                botRightX.value = windowWidth
+                botRightY.value = windowHeight + 500
+            }
+            else {
+                topLeftX.value = 0
+                topLeftY.value = 0
+                topRightX.value = 0
+                topRightY.value = 0
+                botLeftX.value = 0
+                botLeftY.value = 0
+                botRightX.value = 0
+                botRightY.value = 0
+            }
 
         },
         onEnd: (event, ctx) => {
@@ -83,14 +134,18 @@ const GestureDot = () => {
     })
 
     return (
-        <AnimatedView style={[bStyle, { height: windowHeight }]} >
+        <AnimatedView  >
+            <AnimatedView style={[tlStyle, { backgroundColor: "red", position: "absolute", borderBottomRightRadius: 500 }]} />
+            <AnimatedView style={[trStyle, { backgroundColor: "orange", position: "absolute", right: 0, borderBottomLeftRadius: 500 }]} />
+            <AnimatedView style={[blStyle, { backgroundColor: "green", position: "absolute", bottom: -windowHeight + 100, borderTopRightRadius: 500 }]} />
+            <AnimatedView style={[brStyle, { backgroundColor: "aquamarine", position: "absolute", bottom: -windowHeight + 100, right: 0, borderTopLeftRadius: 500 }]} />
+            {/* <AnimatedView style={[bStyle, { backgroundColor: "red", position: "absolute", borderBottomRightRadius: 500 }]} />
+            <AnimatedView style={[bStyle, { backgroundColor: "red", position: "absolute", borderBottomRightRadius: 500 }]} /> */}
             <PanGestureHandler onGestureEvent={panGesture}  >
                 <AnimatedView style={[vStyle, { height: 100, width: 100, backgroundColor: "blue" }]} />
             </PanGestureHandler>
-            <Svg width={windowWidth} height={windowHeight} style={{ borderColor: "yellow", borderWidth: 10, position: "absolute" }} >
-                {/* <Circle r="180" stroke="black" />
-                <Circle r="180" stroke="black" cx={windowWidth} /> */}
-            </Svg>
+
+
         </AnimatedView>
 
     )
